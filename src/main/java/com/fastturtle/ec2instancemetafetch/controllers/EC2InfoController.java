@@ -1,34 +1,57 @@
 package com.fastturtle.ec2instancemetafetch.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/ec2")
 public class EC2InfoController {
 
-    @GetMapping("/getIp")
-    public Map<String, String> getEC2InstanceDetails() {
+    private static final String METADATA_URL = "http://169.254.169.254/latest/meta-data/";
+
+    @GetMapping("/getInstanceDetails")
+    public Map<String, String> getInstanceDetails() {
+
         Map<String, String> response = new HashMap<>();
+        try {
+            // Get the instance ID
+            String instanceId = getMetadata("instance-id");
+            // Get the availability zone
+            String availabilityZone = getMetadata("placement/availability-zone");
 
-        response.put("welcomeMessage", "Welcome to EC2 instance");
+            // Output the details
 
-        String ip;
+            response.put("instanceID", instanceId);
+            response.put("availabilityZone", availabilityZone);
 
-        try(final DatagramSocket socket = new DatagramSocket()){
-            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-            ip = socket.getLocalAddress().getHostAddress();
-            response.put("ipAddressOfMachine", ip);
-        } catch(SocketException | UnknownHostException e) {
+        } catch (Exception e) {
             response.put("error", e.getMessage());
         }
+
         return response;
+    }
+
+    private static String getMetadata(String path) throws Exception {
+        String fullUrl = METADATA_URL + path;
+        URL url = new URL(fullUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            StringBuilder response = new StringBuilder();
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            return response.toString();
+        }
     }
 
 
