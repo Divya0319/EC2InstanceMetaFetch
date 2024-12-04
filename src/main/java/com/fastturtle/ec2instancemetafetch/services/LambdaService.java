@@ -1,6 +1,7 @@
 package com.fastturtle.ec2instancemetafetch.services;
 
 
+import com.fastturtle.ec2instancemetafetch.models.LeftRotateArrayRequest;
 import com.fastturtle.ec2instancemetafetch.utils.LinkedList;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.SdkBytes;
@@ -38,6 +39,22 @@ public class LambdaService {
 
         InvokeRequest invokeRequest = InvokeRequest.builder()
                 .functionName("printCommonElementsInLinkedLists")
+                .payload(SdkBytes.fromUtf8String(payload))
+                .build();
+
+        InvokeResponse response = lambdaClient.invoke(invokeRequest);
+
+        return response.payload().asUtf8String();
+    }
+
+    public String invokeLeftRotateByDPlacesFunction(LeftRotateArrayRequest leftRotateArrayRequest) {
+        String payload = "{"
+                + "\"arr\": " + Arrays.toString(leftRotateArrayRequest.getArr()) + ","
+                + "\"d\": " + leftRotateArrayRequest.getD()
+                + "}";
+
+        InvokeRequest invokeRequest = InvokeRequest.builder()
+                .functionName("leftRotateArrayByDPlaces")
                 .payload(SdkBytes.fromUtf8String(payload))
                 .build();
 
