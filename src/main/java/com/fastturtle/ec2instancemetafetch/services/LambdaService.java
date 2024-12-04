@@ -1,6 +1,7 @@
 package com.fastturtle.ec2instancemetafetch.services;
 
 
+import com.fastturtle.ec2instancemetafetch.utils.LinkedList;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
@@ -24,6 +25,21 @@ public class LambdaService {
                 .functionName("nextGreaterPermutation")
                 .payload(SdkBytes.fromUtf8String(payload))
         .build();
+
+        InvokeResponse response = lambdaClient.invoke(invokeRequest);
+
+        return response.payload().asUtf8String();
+    }
+    public String invokePrintCommonElementsInLinkedListFunction(LinkedList<Integer> l1, LinkedList<Integer> l2) {
+        String payload = "{"
+                + "\"linkedList1\": " + l1.toString() + ","
+                + "\"linkedList2\": " + l2.toString()
+                + "}";
+
+        InvokeRequest invokeRequest = InvokeRequest.builder()
+                .functionName("printCommonElementsInLinkedLists")
+                .payload(SdkBytes.fromUtf8String(payload))
+                .build();
 
         InvokeResponse response = lambdaClient.invoke(invokeRequest);
 
