@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.fastturtle.ec2instancemetafetch.models.LambdaRequest;
+import com.fastturtle.ec2instancemetafetch.models.CommonElementsInLinkedListsRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -22,12 +22,12 @@ public class LinkedListDeserializer {
 
 	
 	// Factory method for deserialization
-    public static LambdaRequest fromJson(InputStream json) {
-        return gson.fromJson(new InputStreamReader(json), LambdaRequest.class);
+    public static CommonElementsInLinkedListsRequest fromJson(InputStream json) {
+        return gson.fromJson(new InputStreamReader(json), CommonElementsInLinkedListsRequest.class);
     }
     
-    public static LambdaRequest fromJson(JsonObject json) {
-        return gson.fromJson(json, LambdaRequest.class);
+    public static CommonElementsInLinkedListsRequest fromJson(JsonObject json) {
+        return gson.fromJson(json, CommonElementsInLinkedListsRequest.class);
     }
     
     public static void main(String[] args) throws IOException {
@@ -49,7 +49,7 @@ public class LinkedListDeserializer {
     	
 
         // Deserialize JSON input using factory method
-        LambdaRequest request = fromJson(jObj);
+        CommonElementsInLinkedListsRequest request = fromJson(jObj);
 
         // Print deserialized object
         System.out.println("LinkedList1: " + request.getLinkedList1());
